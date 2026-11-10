@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zunex AI</title>
+<link rel="manifest" href="manifest.json">
+<meta name="description" content="Zunex AI: telefonda internetsiz çalışan, API anahtarı gerektirmeyen çevrimdışı asistan.">
+<link rel="icon" href="icon.svg">
+<meta name="theme-color" content="#6c4cf5">
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--text:#1b1d2a;--muted:#6b7089;--accent:#6c4cf5;--accent2:#3b82f6;--user:#6c4cf5;--userText:#fff;--bot:#fff;--border:#e3e5ef;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1119;--card:#181b27;--text:#eceefa;--muted:#8d92ad;--bot:#1d2130;--border:#2a2f44;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1119;--card:#181b27;--text:#eceefa;--muted:#8d92ad;--bot:#1d2130;--border:#2a2f44;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card);border-bottom:1px solid var(--border)}
+.logo{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
+header h1{font-size:17px;margin:0;line-height:1.1}
+header small{color:var(--muted);font-size:12px;display:flex;align-items:center;gap:5px}
+.dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e}
+header .sp{flex:1}
+.hb{width:38px;height:38px;border-radius:11px;border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;flex:none}
+.hb:active{transform:scale(.94)}
+#msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.row{display:flex;flex-direction:column;animation:pop .28s cubic-bezier(.2,.9,.3,1.2) both}
+.row.still{animation:none}
+.row.u{align-items:flex-end;transform-origin:right bottom}.row.a{align-items:flex-start;transform-origin:left bottom}
+@keyframes pop{from{opacity:0;transform:translateY(12px) scale(.92)}to{opacity:1;transform:none}}
+#send.go{animation:fly .4s ease}
+@keyframes fly{0%{transform:none}40%{transform:translate(7px,-7px) rotate(-18deg) scale(.88)}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){.row,#send.go,.dots span{animation:none!important}}
+.b{max-width:min(720px,86%);padding:10px 14px;border-radius:16px;line-height:1.5;white-space:pre-wrap;word-wrap:break-word;overflow-wrap:anywhere;font-size:15px}
+.u .b{background:var(--user);color:var(--userText);border-bottom-right-radius:5px}
+.a .b{background:var(--bot);border:1px solid var(--border);border-bottom-left-radius:5px}
+.a.alert .b{border-color:var(--accent);box-shadow:0 0 0 2px rgba(108,76,245,.25)}
+.b img{max-width:100%;max-height:240px;border-radius:10px;display:block;margin-bottom:6px}
+.file{display:inline-block;font-size:12px;padding:3px 8px;border-radius:8px;background:rgba(127,127,127,.18);margin-bottom:6px}
+.acts{display:flex;gap:6px;margin:4px 0 0 4px;opacity:.75}
+.acts button{border:0;background:none;color:var(--muted);font-size:12px;padding:4px 6px;border-radius:8px;cursor:pointer}
+.acts button:active{background:rgba(127,127,127,.18)}
+.empty{margin:auto;text-align:center;color:var(--muted);max-width:380px}
+.empty .logo{margin:0 auto 12px;width:56px;height:56px;font-size:26px;border-radius:17px}
+.empty h2{color:var(--text);margin:0 0 6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+.chips button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:999px;cursor:pointer;font-size:13px}
+footer{padding:10px 12px;background:var(--card);border-top:1px solid var(--border)}
+#att{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+#att:empty{display:none}
+.att{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:4px 8px;font-size:12px}
+.att img{width:28px;height:28px;object-fit:cover;border-radius:6px}
+.att button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:15px}
+.bar{display:flex;gap:8px;align-items:flex-end}
+textarea{flex:1;resize:none;max-height:140px;min-height:42px;padding:10px 12px;border-radius:14px;border:1px solid var(--border);background:var(--bg);color:var(--text);font:inherit;font-size:15px;outline:none}
+textarea:focus{border-color:var(--accent)}
+.ic{width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;font-size:18px;flex:none}
+#send{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:0;font-size:17px}
+#send:disabled{opacity:.5;cursor:default}
+.note{color:var(--muted);font-size:12px;text-align:center;margin-top:6px}
+.dots span{display:inline-block;width:6px;height:6px;margin:0 2px;border-radius:50%;background:var(--muted);animation:d 1s infinite}
+.dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
+@keyframes d{0%,80%,100%{opacity:.25}40%{opacity:1}}
+#toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:8px 14px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:.25s}
+#toast.on{opacity:.92;transform:translateX(-50%)}
+
+:root{--pat:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%236c4cf5' stroke-opacity='.16' stroke-width='1.2'%3E%3Cpath d='M36 6l30 30-30 30L6 36z'/%3E%3Crect x='19' y='19' width='34' height='34'/%3E%3Ccircle cx='36' cy='36' r='5'/%3E%3C/g%3E%3C/svg%3E")}
+#msgs{background-image:var(--pat),radial-gradient(80% 50% at 50% 0%,rgba(108,76,245,.14),transparent 70%);background-size:72px 72px,100% 100%}
+header{background:linear-gradient(90deg,rgba(108,76,245,.14),rgba(59,130,246,.10)),var(--card);box-shadow:0 1px 0 var(--border),0 4px 20px rgba(108,76,245,.12)}
+.a .b{box-shadow:0 2px 10px rgba(108,76,245,.10)}
+.u .b{background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 4px 14px rgba(108,76,245,.35)}
+.logo{box-shadow:0 0 18px rgba(108,76,245,.5)}
+.empty .logo{box-shadow:0 0 40px rgba(108,76,245,.55)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Z</div>
+  <div><h1>Zunex AI</h1><small><span class="dot"></span><span id="sub">Çevrimdışı asistan · internetsiz çalışır</span></small></div>
+  <div class="sp"></div>
+  <button class="hb" id="theme" title="Tema" aria-label="Tema">◐</button>
+  <button class="hb" id="export" title="Sohbeti dışa aktar" aria-label="Sohbeti dışa aktar">⤓</button>
+  <button class="hb" id="clear" title="Sohbeti temizle" aria-label="Sohbeti temizle">🗑</button>
+</header>
+<div id="msgs" role="log" aria-live="polite"></div>
+<footer>
+  <div id="att"></div>
+  <div class="bar">
+    <button class="ic" id="attach" title="Fotoğraf veya dosya ekle" aria-label="Fotoğraf veya dosya ekle">📎</button>
+    <textarea id="inp" rows="1" placeholder="Zunex AI’a bir şey yaz…"></textarea>
+    <button class="ic" id="send" title="Gönder" aria-label="Gönder">➤</button>
+  </div>
+  <input type="file" id="file" multiple hidden accept="image/*,.txt,.md,.csv,.json,.js,.py,.html,.css,.log,.xml,.yaml,.yml">
+  <div class="note" id="note"></div>
+</footer>
+<div id="toast" role="status"></div>
+<script src="knowledge.js"></script>
+<script src="assistant.js"></script>
+<script>
+(function(){
+  var HK="zunex-ai-history-v1",SK="zunex-ai-state-v2",TK="zunex-ai-timers-v1",THK="zunex-ai-theme";
+  var $=function(id){return document.getElementById(id)};
+  var msgs=$("msgs"),inp=$("inp"),send=$("send"),att=$("att"),fileIn=$("file"),note=$("note");
+  var history=[],pending=[],timers=[],state={name:"",last:"",pending:null,notes:[]},busy=false,tm=null,iv=null;
+  var REDUCE=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var TEXTX=/\.(txt|md|csv|json|js|py|html|css|log|xml|ya?ml)$/i;
+
+  /* ---- Arayüz dili (cihaz diline göre) ---- */
+  var UL=String(navigator.language||"tr").slice(0,2).toLowerCase();if(["tr","az","en","ru"].indexOf(UL)<0)UL="tr";
+  var UI={
+    tr:{sub:"Çevrimdışı asistan · internetsiz çalışır",ph:"Zunex AI’a bir şey yaz…",hint:"Enter ile gönder, Shift+Enter ile yeni satır",hello:"Merhaba, ben Zunex AI",
+      intro:"Telefonunda internetsiz çalışan bir asistanım: hesap yapar, not tutar, zamanlayıcı kurar, tarih ve birim hesaplarım, temel bilgi sorularını yanıtlarım. Bilmediğimi açıkça söylerim.",
+      chips:["Neler yapabilirsin?","Not al: Süt ve ekmek al","10 dakika zamanlayıcı","Güçlü şifre oluştur","Yılbaşına kaç gün kaldı?","Bilgi yarışması","5 km kaç metre?","Nevruz hakkında bilgi"],
+      copy:"Kopyala",copied:"Kopyalandı",speak:"Sesli oku",theme:"Tema",themes:["Otomatik tema","Koyu tema","Açık tema"],exp:"Sohbeti dışa aktar",clear:"Sohbeti temizle",
+      confirm:"Sohbet geçmişi ve adın silinsin mi? (Notların ve zamanlayıcıların kalır.)",attach:"Fotoğraf veya dosya ekle",send:"Gönder",big:"çok büyük (en fazla 8 MB).",unread:"okunamadı.",
+      up:"⏰ Süre doldu!",late:" (uygulama kapalıyken doldu)",sent:"(dosya gönderildi)",err:"Bir hata oluştu: ",none:"Dışa aktarılacak mesaj yok.",you:"Sen",title:"Zunex AI sohbeti"},
+    az:{sub:"Oflayn köməkçi · internetsiz işləyir",ph:"Zunex AI-a nəsə yaz…",hint:"Enter ilə göndər, Shift+Enter ilə yeni sətir",hello:"Salam, mən Zunex AI-yam",
+      intro:"Telefonunda internetsiz işləyən köməkçiyəm: hesablayıram, qeyd saxlayıram, taymer qururam, tarix və vahid hesablayıram, əsas suallara cavab verirəm. Bilmədiyimi açıq deyirəm.",
+      chips:["Nələr edə bilərsən?","Qeyd et: Çörək al","10 dəqiqə taymer","Güclü parol yarat","Yeni ilə neçə gün qalıb?","Viktorina","5 km neçə metrdir?","Novruz haqqında məlumat"],
+      copy:"Kopyala",copied:"Kopyalandı",speak:"Səsli oxu",theme:"Tema",themes:["Avtomatik tema","Qaranlıq tema","İşıqlı tema"],exp:"Söhbəti ixrac et",clear:"Söhbəti təmizlə",
+      confirm:"Söhbət tarixçəsi və adın silinsin? (Qeydlərin və taymerlərin qalır.)",attach:"Şəkil və ya fayl əlavə et",send:"Göndər",big:"çox böyükdür (ən çoxu 8 MB).",unread:"oxunmadı.",
+      up:"⏰ Vaxt bitdi!",late:" (tətbiq bağlı ikən bitdi)",sent:"(fayl göndərildi)",err:"Xəta baş verdi: ",none:"İxrac üçün mesaj yoxdur.",you:"Sən",title:"Zunex AI söhbəti"},
+    en:{sub:"Offline assistant · works without internet",ph:"Message Zunex AI…",hint:"Enter to send, Shift+Enter for a new line",hello:"Hi, I'm Zunex AI",
+      intro:"I run on your phone with no internet: I calculate, keep notes, set timers, do date and unit maths, and answer basic questions. When I don't know something, I say so.",
+      chips:["What can you do?","Note: buy milk","Set a 10 minute timer","Generate a strong password","How many days until New Year?","Start a quiz","How many meters in 5 km?","Tell me about Novruz"],
+      copy:"Copy",copied:"Copied",speak:"Read aloud",theme:"Theme",themes:["Auto theme","Dark theme","Light theme"],exp:"Export chat",clear:"Clear chat",
+      confirm:"Delete the chat history and your name? (Notes and timers stay.)",attach:"Add a photo or file",send:"Send",big:"is too large (max 8 MB).",unread:"couldn't be read.",
+      up:"⏰ Time's up!",late:" (finished while the app was closed)",sent:"(file sent)",err:"Something went wrong: ",none:"There are no messages to export.",you:"You",title:"Zunex AI chat"},
+    ru:{sub:"Офлайн-ассистент · работает без интернета",ph:"Напиши Zunex AI…",hint:"Enter — отправить, Shift+Enter — новая строка",hello:"Привет, я Zunex AI",
+      intro:"Я работаю на телефоне без интернета: считаю, веду заметки, ставлю таймеры, считаю даты и единицы, отвечаю на базовые вопросы. Если не знаю — так и скажу.",
+      chips:["Что ты умеешь?","Заметка: купить хлеб","Таймер на 10 минут","Сгенерируй надёжный пароль","Сколько дней до Нового года?","Викторина","Сколько метров в 5 км?","Что такое Новруз?"],
+      copy:"Копировать",copied:"Скопировано",speak:"Прочитать вслух",theme:"Тема",themes:["Авто тема","Тёмная тема","Светлая тема"],exp:"Экспорт чата",clear:"Очистить чат",
+      confirm:"Удалить историю чата и имя? (Заметки и таймеры останутся.)",attach:"Добавить фото или файл",send:"Отправить",big:"слишком большой (макс. 8 МБ).",unread:"не удалось прочитать.",
+      up:"⏰ Время вышло!",late:" (время вышло, пока приложение было закрыто)",sent:"(файл отправлен)",err:"Произошла ошибка: ",none:"Нет сообщений для экспорта.",you:"Ты",title:"Чат Zunex AI"}
+  }[UL];
+  document.documentElement.lang=UL;
+  $("sub").textContent=UI.sub;inp.placeholder=UI.ph;note.textContent=UI.hint;
+  [["attach",UI.attach],["send",UI.send],["export",UI.exp],["clear",UI.clear],["theme",UI.theme]].forEach(function(x){$(x[0]).title=x[1];$(x[0]).setAttribute("aria-label",x[1])});
+
+  /* ---- Kayıt ---- */
+  function load(){
+    try{var r=localStorage.getItem(HK);if(r)history=JSON.parse(r)||[]}catch(e){history=[]}
+    try{var s=JSON.parse(localStorage.getItem(SK)||"{}")||{};state.name=s.name||"";state.notes=Array.isArray(s.notes)?s.notes:[];if(s.lang)state.lang=s.lang}catch(e){}
+    state.uiLang=UL;
+  }
+  function save(){
+    try{localStorage.setItem(HK,JSON.stringify(history.slice(-200)));localStorage.setItem(SK,JSON.stringify({name:state.name,notes:state.notes||[],lang:state.lang}))}catch(e){}
+  }
+  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+  function scroll(){msgs.scrollTop=msgs.scrollHeight}
+  var tt=null;function toast(t){var x=$("toast");x.textContent=t;x.classList.add("on");clearTimeout(tt);tt=setTimeout(function(){x.classList.remove("on")},1600)}
+
+  /* ---- Tema ---- */
+  var themeIx=0;try{themeIx=+localStorage.getItem(THK)||0}catch(e){}
+  function applyTheme(){var r=document.documentElement;if(themeIx===1)r.setAttribute("data-theme","dark");else if(themeIx===2)r.setAttribute("data-theme","light");else r.removeAttribute("data-theme")}
+  applyTheme();
+  $("theme").onclick=function(){themeIx=(themeIx+1)%3;try{localStorage.setItem(THK,themeIx)}catch(e){}applyTheme();toast(UI.themes[themeIx])};
+
+  /* ---- Kopyala / sesli oku ---- */
+  function copyText(t){
+    function fb(){var a=el("textarea");a.value=t;a.style.position="fixed";a.style.opacity="0";document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(e){}a.remove();toast(UI.copied)}
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){toast(UI.copied)},fb);else fb();
+  }
+  var CAN_SPEAK="speechSynthesis" in window&&typeof SpeechSynthesisUtterance!=="undefined";
+  function speak(t){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t.replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/gu,""));u.lang={tr:"tr-TR",az:"az-AZ",en:"en-US",ru:"ru-RU"}[state.lang||UL]||"tr-TR";speechSynthesis.speak(u)}catch(e){}}
+
+  /* ---- Mesaj balonları ---- */
+  function bubble(role,text,extras,still,alert){
+    var row=el("div","row "+(role==="user"?"u":"a")+(still?" still":"")+(alert?" alert":"")),b=el("div","b"),sp=el("span",null,text);
+    (extras||[]).forEach(function(x){
+      if(x.url){var im=el("img");im.src=x.url;im.alt=x.name;b.appendChild(im)}
+      else b.appendChild(el("div","file","📄 "+x.name));
+    });
+    b.appendChild(sp);row.appendChild(b);
+    if(role!=="user"){
+      var ac=el("div","acts"),c=el("button",null,"⧉ "+UI.copy);c.onclick=function(){copyText(sp.textContent)};ac.appendChild(c);
+      if(CAN_SPEAK){var s=el("button",null,"🔊 "+UI.speak);s.onclick=function(){speak(sp.textContent)};ac.appendChild(s)}
+      row.appendChild(ac);
+    }
+    msgs.appendChild(row);scroll();
+    return sp;
+  }
+  function typingRow(){
+    var row=el("div","row a"),b=el("div","b"),d=el("span","dots");
+    for(var i=0;i<3;i++)d.appendChild(el("span"));
+    b.appendChild(d);row.appendChild(b);msgs.appendChild(row);scroll();return row;
+  }
+  function cancelAnim(){clearTimeout(tm);clearInterval(iv);busy=false;send.disabled=false}
+  function typeOut(sp,text,done){
+    var ch=Array.from(text),i=0,step=Math.max(2,Math.ceil(ch.length/45));
+    iv=setInterval(function(){
+      i+=step;sp.textContent=ch.slice(0,i).join("");scroll();
+      if(i>=ch.length){clearInterval(iv);done()}
+    },22);
+  }
+  function renderAll(){
+    msgs.textContent="";
+    if(!history.length){
+      var e=el("div","empty");
+      e.appendChild(el("div","logo","Z"));
+      e.appendChild(el("h2",null,UI.hello));
+      e.appendChild(el("div",null,UI.intro));
+      var c=el("div","chips");
+      UI.chips.forEach(function(s){var bt=el("button",null,s);bt.onclick=function(){inp.value=s;doSend()};c.appendChild(bt)});
+      e.appendChild(c);msgs.appendChild(e);return;
+    }
+    history.forEach(function(m){bubble(m.role,m.text,(m.files||[]).map(function(n){return{name:n}}),true,m.alert)});
+  }
+  function renderAtt(){
+    att.textContent="";
+    pending.forEach(function(p,i){
+      var d=el("div","att");
+      if(p.url){var im=el("img");im.src=p.url;d.appendChild(im)}
+      d.appendChild(el("span",null,p.name));
+      var x=el("button",null,"×");x.setAttribute("aria-label","×");x.onclick=function(){pending.splice(i,1);renderAtt()};
+      d.appendChild(x);att.appendChild(d);
+    });
+  }
+
+  /* ---- Zamanlayıcılar (cihazda, internetsiz) ---- */
+  var handles={};
+  function saveTimers(){try{localStorage.setItem(TK,JSON.stringify(timers))}catch(e){}}
+  function arm(x){clearTimeout(handles[x.id]);handles[x.id]=setTimeout(function(){fire(x,false)},Math.max(0,Math.min(x.due-Date.now(),2147483000)))}
+  function beep(){try{var C=window.AudioContext||window.webkitAudioContext;if(!C)return;var a=new C();[0,.35,.7].forEach(function(t){var o=a.createOscillator(),g=a.createGain();o.type="sine";o.frequency.value=880;g.gain.setValueAtTime(.0001,a.currentTime+t);g.gain.exponentialRampToValueAtTime(.3,a.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+t+.3);o.connect(g);g.connect(a.destination);o.start(a.currentTime+t);o.stop(a.currentTime+t+.32)});setTimeout(function(){try{a.close()}catch(e){}},1500)}catch(e){}}
+  function notify(t){
+    try{
+      if(!("Notification" in window)||Notification.permission!=="granted")return;
+      if(navigator.serviceWorker&&navigator.serviceWorker.ready)navigator.serviceWorker.ready.then(function(r){r.showNotification("Zunex AI",{body:t,icon:"icon-192.png",tag:"zunex-timer"})}).catch(function(){});
+      else new Notification("Zunex AI",{body:t,icon:"icon-192.png"});
+    }catch(e){}
+  }
+  function fire(x,late){
+    clearTimeout(handles[x.id]);delete handles[x.id];
+    timers=timers.filter(function(y){return y.id!==x.id});saveTimers();
+    var t=UI.up+(x.label?" "+x.label:"")+(late?UI.late:"");
+    if(!history.length)msgs.textContent="";
+    history.push({role:"assistant",text:t,alert:true});save();bubble("assistant",t,null,false,true);
+    beep();try{navigator.vibrate&&navigator.vibrate([300,150,300])}catch(e){}
+    if(document.hidden||late)notify(t);
+  }
+  function checkDue(){var now=Date.now();timers.slice().forEach(function(x){if(x.due<=now)fire(x,document.hidden)})}
+  function loadTimers(){
+    try{timers=JSON.parse(localStorage.getItem(TK)||"[]")||[]}catch(e){timers=[]}
+    var now=Date.now();timers.slice().forEach(function(x){if(x.due<=now)fire(x,true);else arm(x)});
+  }
+  function handleState(){
+    if(state.timerCancel){timers.forEach(function(x){clearTimeout(handles[x.id])});timers=[];handles={};saveTimers();delete state.timerCancel}
+    if(state.timer){
+      var x={id:String(Date.now())+Math.random().toString(36).slice(2,6),due:state.timer.due,label:state.timer.label||""};
+      delete state.timer;timers.push(x);saveTimers();arm(x);
+      try{if("Notification" in window&&Notification.permission==="default")Notification.requestPermission()}catch(e){}
+    }
+  }
+  document.addEventListener("visibilitychange",function(){if(!document.hidden)checkDue()});
+
+  /* ---- Dosya ekleme ---- */
+  $("attach").onclick=function(){fileIn.click()};
+  fileIn.onchange=function(){
+    Array.prototype.forEach.call(fileIn.files,function(f){
+      if(f.size>8*1024*1024){note.textContent="“"+f.name+"” "+UI.big;return}
+      var p={name:f.name,size:f.size};
+      if(f.type.indexOf("image/")===0){
+        p.kind="image";p.url=URL.createObjectURL(f);pending.push(p);renderAtt();
+        var im=new Image();im.onload=function(){p.width=im.naturalWidth;p.height=im.naturalHeight};im.src=p.url;
+      }else if(f.type.indexOf("text/")===0||TEXTX.test(f.name)){
+        var r=new FileReader();
+        r.onload=function(){var s=String(r.result);p.kind="text";p.truncated=s.length>30000;p.text=s.slice(0,30000);pending.push(p);renderAtt()};
+        r.onerror=function(){note.textContent="“"+f.name+"” "+UI.unread};
+        r.readAsText(f);
+      }else{p.kind="binary";pending.push(p);renderAtt()}
+    });
+    fileIn.value="";
+  };
+
+  /* ---- Dışa aktar / temizle ---- */
+  $("export").onclick=function(){
+    if(!history.length){toast(UI.none);return}
+    var d=new Date(),pad=function(n){return(n<10?"0":"")+n},stamp=d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+    var txt=UI.title+" · "+stamp+"\n\n"+history.map(function(m){return(m.role==="user"?UI.you:"Zunex")+": "+m.text}).join("\n\n");
+    var a=el("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/plain;charset=utf-8"}));a.download="zunex-"+stamp+".txt";document.body.appendChild(a);a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1000);
+  };
+  $("clear").onclick=function(){
+    if(history.length&&!window.confirm(UI.confirm))return;
+    cancelAnim();try{speechSynthesis.cancel()}catch(e){}
+    history=[];pending=[];var keep=state.notes||[];state={name:"",last:"",pending:null,notes:keep,uiLang:UL};renderAtt();save();renderAll();
+  };
+
+  /* ---- Gönderme ---- */
+  inp.addEventListener("input",function(){inp.style.height="auto";inp.style.height=Math.min(inp.scrollHeight,140)+"px"});
+  inp.addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();doSend()}});
+  send.onclick=doSend;
+
+  function doSend(){
+    var text=inp.value.trim();
+    if(busy||(!text&&!pending.length))return;
+    busy=true;send.disabled=true;send.classList.remove("go");void send.offsetWidth;send.classList.add("go");
+    var files=pending.slice();pending=[];renderAtt();
+    inp.value="";inp.style.height="auto";note.textContent=UI.hint;
+    var wasEmpty=!history.length;
+    history.push({role:"user",text:text||UI.sent,files:files.map(function(f){return f.name})});
+    if(wasEmpty)msgs.textContent="";
+    bubble("user",text||UI.sent,files.map(function(f){return{name:f.name,url:f.url}}));
+    var out;
+    try{out=ZunexAssistant.reply(text,{state:state,files:files})}
+    catch(err){out=UI.err+(err&&err.message||"?")}
+    handleState();
+    history.push({role:"assistant",text:out});
+    save();
+    if(REDUCE){bubble("assistant",out);busy=false;send.disabled=false;inp.focus();return}
+    var tr=typingRow();
+    tm=setTimeout(function(){
+      tr.remove();
+      var sp=bubble("assistant","");
+      typeOut(sp,out,function(){busy=false;send.disabled=false;inp.focus()});
+    },350+Math.min(out.length*4,650));
+  }
+
+  load();renderAll();loadTimers();
+  if("serviceWorker" in navigator&&location.protocol.indexOf("http")===0){navigator.serviceWorker.register("sw.js").catch(function(){})}
+})();
+</script>
+</body>
+</html>
